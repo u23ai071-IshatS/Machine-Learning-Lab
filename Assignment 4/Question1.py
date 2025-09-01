@@ -1,6 +1,9 @@
-import cupy as cp
+import torch
 import matplotlib.pyplot as plt
 import os
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
 
 num_rolls_range = range(2, 51)
 num_experiments = [100, 500, 1000, 5000, 10000, 50000, 100000]
@@ -13,14 +16,14 @@ results = []
 for num_rolls in num_rolls_range:
     for n in num_experiments:
         # GPU accelerated random sampling
-        rolls = cp.random.randint(1, 7, size=(n, num_rolls))
-        sums = cp.sum(rolls, axis=1)
+        rolls = torch.randint(1, 7, (n, num_rolls), device=device)
+        sums = rolls.sum(dim=1)
 
-        # Convert back to NumPy for plotting
-        sums_np = cp.asnumpy(sums)
+        # Convert to CPU numpy for plotting
+        sums_np = sums.cpu().numpy()
 
-        mean_val = cp.mean(sums).item()
-        var_val = cp.var(sums).item()
+        mean_val = sums.float().mean().item()
+        var_val = sums.float().var(unbiased=False).item()  # same as cupy.var
         results.append([num_rolls, n, mean_val, var_val])
 
         print(f"Rolls={num_rolls}, Experiments={n} → Mean={mean_val:.2f}, Var={var_val:.2f}")
