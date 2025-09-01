@@ -17,12 +17,11 @@ output_dir = "./Assignment 4/binomial_histograms"
 os.makedirs(output_dir, exist_ok=True)
 
 for p in success_rates:
-    # Generate many binomial samples
-    # torch.binomial needs number of trials as tensor
     trials = torch.full((100000,), n, device=device, dtype=torch.float32)
     probs = torch.full((100000,), p, device=device, dtype=torch.float32)
 
-    samples = torch.binomial(trials, probs)  # simulate outcomes
+    samples = torch.binomial(trials, probs)
+    
     samples_np = samples.cpu().numpy()
 
     # Histogram

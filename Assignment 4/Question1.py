@@ -15,15 +15,13 @@ results = []
 
 for num_rolls in num_rolls_range:
     for n in num_experiments:
-        # GPU accelerated random sampling
         rolls = torch.randint(1, 7, (n, num_rolls), device=device)
         sums = rolls.sum(dim=1)
 
-        # Convert to CPU numpy for plotting
         sums_np = sums.cpu().numpy()
 
         mean_val = sums.float().mean().item()
-        var_val = sums.float().var(unbiased=False).item()  # same as cupy.var
+        var_val = sums.float().var(unbiased=False).item()  
         results.append([num_rolls, n, mean_val, var_val])
 
         print(f"Rolls={num_rolls}, Experiments={n} → Mean={mean_val:.2f}, Var={var_val:.2f}")
